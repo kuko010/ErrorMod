@@ -8,8 +8,15 @@ base.archivesName = "modid"
 
 java.toolchain.languageVersion = JavaLanguageVersion.of(21)
 
+repositories {
+    maven {
+        url = "https://maven.favouriteless.net/releases"
+    }
+}
+
+
 neoForge {
-    version = "21.1.176"
+    version = "21.1.209"
 
     runs {
         client {
@@ -38,6 +45,17 @@ neoForge {
         }
     }
 }
+
+
+dependencies {
+    jarJar(implementation(group: 'com.wdiscute', name: 'libtooltips')) {
+        version {
+            // Version used in your workspace and bundled in mod jar
+            prefer '1.2'
+        }
+    }
+}
+
 
 tasks.withType(JavaCompile).configureEach {
     options.encoding = 'UTF-8' // Use the UTF-8 charset for Java compilation

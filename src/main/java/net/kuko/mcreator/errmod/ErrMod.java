@@ -7,16 +7,20 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 import net.neoforged.neoforge.network.handling.IPayloadHandler;
 import net.neoforged.neoforge.network.event.RegisterPayloadHandlersEvent;
 import net.neoforged.neoforge.event.tick.ServerTickEvent;
+import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.common.NeoForge;
 import net.neoforged.fml.util.thread.SidedThreadGroups;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.bus.api.IEventBus;
 
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraft.util.Tuple;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.FriendlyByteBuf;
+
+import net.kuko.mcreator.errmod.init.ErrModItems;
 
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.Map;
@@ -25,22 +29,30 @@ import java.util.HashMap;
 import java.util.Collection;
 import java.util.ArrayList;
 
-@Mod("errmod")
-public class ErrmodMod {
-	public static final Logger LOGGER = LogManager.getLogger(ErrmodMod.class);
-	public static final String MODID = "errmod";
+@Mod("err")
+public class ErrMod {
+	public static final Logger LOGGER = LogManager.getLogger(ErrMod.class);
+	public static final String MODID = "err";
 
-	public ErrmodMod(IEventBus modEventBus) {
+	public ErrMod(IEventBus modEventBus) {
 		// Start of user code block mod constructor
+		modEventBus.addListener(this::addCreative);
 		// End of user code block mod constructor
 		NeoForge.EVENT_BUS.register(this);
 		modEventBus.addListener(this::registerNetworking);
-
+		ErrModItems.REGISTRY.register(modEventBus);
 		// Start of user code block mod init
+		LOGGER.info("Mod {}, has been initialized!", MODID);
 		// End of user code block mod init
 	}
 
 	// Start of user code block mod methods
+	private void addCreative(BuildCreativeModeTabContentsEvent event) {
+		if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
+			event.accept(ErrModItems.VOID);
+		}
+	}
+
 	// End of user code block mod methods
 	private static boolean networkingRegistered = false;
 	private static final Map<CustomPacketPayload.Type<?>, NetworkMessage<?>> MESSAGES = new HashMap<>();
